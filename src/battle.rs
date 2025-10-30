@@ -1,7 +1,7 @@
 use crate::pokemon::{PokeMini, Pokemon};
 
 #[derive(Debug, Clone, Copy)]
-enum Side {
+pub enum Side {
     Left,
     Right,
 }
@@ -37,12 +37,12 @@ struct Battle {
     pokemon1: Pokemon,
     pokemon2: Pokemon,
     field: Field,
-    player1: Player,
-    player2: Player,
+    player1: Box<dyn Player>,
+    player2: Box<dyn Player>,
 }
 
 impl Battle {
-    pub fn new(mut player1: Player, mut player2: Player) -> Self {
+    pub fn new(mut player1: Box<dyn Player>, mut player2: Box<dyn Player>) -> Self {
         let side1 = Side::new();
         let side2 = Side::opposite(side1);
 
@@ -94,26 +94,12 @@ impl FieldSide {
     }
 }
 
-struct Player {
-    side: Option<Side>,
-    team: Team,
+pub trait Player {
+    fn set_side(&mut self, side: Side);
+    fn first(&self) -> Pokemon;
 }
 
-impl Player {
-    pub fn new(team: Team) -> Self {
-        Self { side: None, team }
-    }
-
-    fn set_side(&mut self, side: Side) {
-        self.side = Some(side)
-    }
-
-    fn first(&self) -> Pokemon {
-        self.team.get(0)
-    }
-}
-
-struct Team {
+pub struct Team {
     team: [PokeMini; 6],
 }
 

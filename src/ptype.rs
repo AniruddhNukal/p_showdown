@@ -38,110 +38,112 @@ pub enum PType {
     Stellar,
 }
 
-use PType::*;
+use PType as P;
 
 impl PType {
     fn type_ef(attacking: &PType, defending: &PType) -> f64 {
         match (attacking, defending) {
-            (Null, _) => 1.,
-            (Normal, t) => match t {
-                Rock | Steel => 0.5,
-                Ghost => 0.,
+            (P::Null, _) => 1.,
+            (P::Normal, t) => match t {
+                P::Rock | P::Steel => 0.5,
+                P::Ghost => 0.,
                 _ => 1.,
             },
-            (Fighting, t) => match t {
-                Normal | Rock | Steel | Ice | Dark => 2.,
-                Flying | Poison | Bug | Psychic | Fairy => 0.5,
-                Ghost => 0.,
+            (P::Fighting, t) => match t {
+                P::Normal | P::Rock | P::Steel | P::Ice | P::Dark => 2.,
+                P::Flying | P::Poison | P::Bug | P::Psychic | P::Fairy => 0.5,
+                P::Ghost => 0.,
                 _ => 1.,
             },
-            (Flying, t) => match t {
-                Fighting | Bug | Grass => 2.,
-                Rock | Steel | Electric => 0.5,
+            (P::Flying, t) => match t {
+                P::Fighting | P::Bug | P::Grass => 2.,
+                P::Rock | P::Steel | P::Electric => 0.5,
                 _ => 1.,
             },
-            (Poison, t) => match t {
-                Grass | Fairy => 2.,
-                Poison | Ground | Rock | Ghost => 0.5,
-                Steel => 0.,
+            (P::Poison, t) => match t {
+                P::Grass | P::Fairy => 2.,
+                P::Poison | P::Ground | P::Rock | P::Ghost => 0.5,
+                P::Steel => 0.,
                 _ => 1.,
             },
-            (Ground, t) => match t {
-                Poison | Rock | Steel | Fire | Electric => 2.,
-                Bug | Grass => 0.5,
-                Flying => 0.,
+            (P::Ground, t) => match t {
+                P::Poison | P::Rock | P::Steel | P::Fire | P::Electric => 2.,
+                P::Bug | P::Grass => 0.5,
+                P::Flying => 0.,
                 _ => 1.,
             },
-            (Rock, t) => match t {
-                Flying | Bug | Fire | Ice => 2.,
-                Fighting | Ground | Steel => 0.5,
+            (P::Rock, t) => match t {
+                P::Flying | P::Bug | P::Fire | P::Ice => 2.,
+                P::Fighting | P::Ground | P::Steel => 0.5,
                 _ => 1.,
             },
-            (Bug, t) => match t {
-                Grass | Psychic | Dark => 2.,
-                Fighting | Flying | Poison | Ghost | Steel | Fire | Fairy => 0.5,
+            (P::Bug, t) => match t {
+                P::Grass | P::Psychic | P::Dark => 2.,
+                P::Fighting | P::Flying | P::Poison | P::Ghost | P::Steel | P::Fire | P::Fairy => {
+                    0.5
+                }
                 _ => 1.,
             },
-            (Ghost, t) => match t {
-                Ghost | Psychic => 2.,
-                Dark => 0.5,
-                Normal => 0.,
+            (P::Ghost, t) => match t {
+                P::Ghost | P::Psychic => 2.,
+                P::Dark => 0.5,
+                P::Normal => 0.,
                 _ => 1.,
             },
-            (Steel, t) => match t {
-                Rock | Ice | Fairy => 2.,
-                Steel | Fire | Water | Electric => 0.5,
+            (P::Steel, t) => match t {
+                P::Rock | P::Ice | P::Fairy => 2.,
+                P::Steel | P::Fire | P::Water | P::Electric => 0.5,
                 _ => 1.,
             },
-            (Fire, t) => match t {
-                Bug | Steel | Grass | Ice => 2.,
-                Rock | Fire | Water | Dragon => 0.5,
+            (P::Fire, t) => match t {
+                P::Bug | P::Steel | P::Grass | P::Ice => 2.,
+                P::Rock | P::Fire | P::Water | P::Dragon => 0.5,
                 _ => 1.,
             },
-            (Water, t) => match t {
-                Ground | Rock | Fire => 2.,
-                Water | Grass | Dragon => 0.5,
+            (P::Water, t) => match t {
+                P::Ground | P::Rock | P::Fire => 2.,
+                P::Water | P::Grass | P::Dragon => 0.5,
                 _ => 1.,
             },
-            (Grass, t) => match t {
-                Ground | Rock | Water => 2.,
-                Flying | Poison | Bug | Steel | Fire | Grass | Dragon => 0.5,
+            (P::Grass, t) => match t {
+                P::Ground | P::Rock | P::Water => 2.,
+                P::Flying | P::Poison | P::Bug | P::Steel | P::Fire | P::Grass | P::Dragon => 0.5,
                 _ => 1.,
             },
-            (Electric, t) => match t {
-                Flying | Water => 2.,
-                Grass | Electric | Dragon => 0.5,
-                Ground => 0.,
+            (P::Electric, t) => match t {
+                P::Flying | P::Water => 2.,
+                P::Grass | P::Electric | P::Dragon => 0.5,
+                P::Ground => 0.,
                 _ => 1.,
             },
-            (Psychic, t) => match t {
-                Fighting | Poison => 2.,
-                Steel | Psychic => 0.5,
-                Dark => 0.,
+            (P::Psychic, t) => match t {
+                P::Fighting | P::Poison => 2.,
+                P::Steel | P::Psychic => 0.5,
+                P::Dark => 0.,
                 _ => 1.,
             },
-            (Ice, t) => match t {
-                Flying | Ground | Grass | Dragon => 2.,
-                Steel | Fire | Water | Ice => 0.5,
+            (P::Ice, t) => match t {
+                P::Flying | P::Ground | P::Grass | P::Dragon => 2.,
+                P::Steel | P::Fire | P::Water | P::Ice => 0.5,
                 _ => 1.,
             },
-            (Dragon, t) => match t {
-                Dragon => 2.,
-                Steel => 0.5,
-                Fairy => 0.,
+            (P::Dragon, t) => match t {
+                P::Dragon => 2.,
+                P::Steel => 0.5,
+                P::Fairy => 0.,
                 _ => 1.,
             },
-            (Dark, t) => match t {
-                Ghost | Psychic => 2.,
-                Fighting | Dark | Fairy => 0.5,
+            (P::Dark, t) => match t {
+                P::Ghost | P::Psychic => 2.,
+                P::Fighting | P::Dark | P::Fairy => 0.5,
                 _ => 1.,
             },
-            (Fairy, t) => match t {
-                Fighting | Dragon | Dark => 2.,
-                Poison | Steel | Fire => 0.5,
+            (P::Fairy, t) => match t {
+                P::Fighting | P::Dragon | P::Dark => 2.,
+                P::Poison | P::Steel | P::Fire => 0.5,
                 _ => 1.,
             },
-            (Stellar, _) => 1.,
+            (P::Stellar, _) => 1.,
         }
     }
 }
