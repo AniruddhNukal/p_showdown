@@ -16,6 +16,7 @@ pub struct Pokemon {
     stages: StageVec,
 }
 
+#[derive(Debug, Clone)]
 pub struct PokeMini {
     level: u8,
     stats: StatVec<BaseStat>,

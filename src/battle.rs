@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::pokemon::{PokeMini, Pokemon};
 
 #[derive(Debug, Clone, Copy)]
@@ -33,33 +35,33 @@ enum Traps {
     LeechSeed,
 }
 
-struct Battle {
+pub struct Battle {
     pokemon1: Pokemon,
     pokemon2: Pokemon,
     field: Field,
-    player1: Box<dyn Player>,
-    player2: Box<dyn Player>,
+    handler1: PlayerHandler,
+    handler2: PlayerHandler,
 }
 
 impl Battle {
-    pub fn new(mut player1: Box<dyn Player>, mut player2: Box<dyn Player>) -> Self {
+    pub fn new(mut player1: Arc<dyn Player>, mut player2: Arc<dyn Player>) -> Self {
         let side1 = Side::new();
         let side2 = Side::opposite(side1);
 
-        player1.set_side(side1);
-        player2.set_side(side2);
+        let handler1 = PlayerHandler::new(player1, side1);
+        let handler2 = PlayerHandler::new(player2, side2);
 
         let field = Field::new(side1, side2);
 
-        let pokemon1 = player1.first();
-        let pokemon2 = player2.first();
+        let pokemon1 = handler1.first();
+        let pokemon2 = handler2.first();
 
         Self {
             pokemon1,
             pokemon2,
             field,
-            player1,
-            player2,
+            handler1,
+            handler2,
         }
     }
 }
@@ -95,10 +97,30 @@ impl FieldSide {
 }
 
 pub trait Player {
-    fn set_side(&mut self, side: Side);
-    fn first(&self) -> Pokemon;
+    fn get_team(&self) -> Team;
 }
 
+struct PlayerHandler {
+    player: Arc<dyn Player>,
+    team: Team,
+    side: Side,
+}
+
+impl PlayerHandler {
+    fn new(player: Arc<dyn Player>, side: Side) -> PlayerHandler {
+        PlayerHandler {
+            player: player.clone(),
+            team: player.get_team(),
+            side,
+        }
+    }
+
+    fn first(&self) -> Pokemon {
+        self.team.get(0)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct Team {
     team: [PokeMini; 6],
 }
