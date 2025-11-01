@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use crate::{
-    ptype::PTypePair,
-    stat::{BaseStat, StageVec, StatVec},
+    ptype::{PType, PTypePair},
+    stat::{BaseStat, StageVec, Stat, StatVec},
 };
 
 pub struct Pokemon {

@@ -1,6 +1,7 @@
 mod battle;
 mod pokemon;
 mod ptype;
+mod species;
 mod stat;
 
 pub mod prelude {

@@ -1,3 +1,11 @@
+use thiserror::Error;
+
+#[derive(Debug, Error)]
+pub enum PTypeError {
+    #[error("Value {bad_val} cannot be converted into a PType.")]
+    PTypeNotFound { bad_val: String },
+}
+
 #[derive(Debug, Clone)]
 pub struct PTypePair {
     primary: PType,
@@ -36,6 +44,36 @@ pub enum PType {
     Dark,
     Fairy,
     Stellar,
+}
+
+impl TryFrom<String> for PType {
+    type Error = PTypeError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        match value.as_str() {
+            "Null" => Ok(P::Null),
+            "Normal" => Ok(P::Normal),
+            "Fighting" => Ok(P::Fighting),
+            "Flying" => Ok(P::Flying),
+            "Poison" => Ok(P::Poison),
+            "Ground" => Ok(P::Ground),
+            "Rock" => Ok(P::Rock),
+            "Bug" => Ok(P::Bug),
+            "Ghost" => Ok(P::Ghost),
+            "Steel" => Ok(P::Steel),
+            "Fire" => Ok(P::Fire),
+            "Water" => Ok(P::Water),
+            "Grass" => Ok(P::Grass),
+            "Electric" => Ok(P::Electric),
+            "Psychic" => Ok(P::Psychic),
+            "Ice" => Ok(P::Ice),
+            "Dragon" => Ok(P::Dragon),
+            "Dark" => Ok(P::Dark),
+            "Fairy" => Ok(P::Fairy),
+            "Stellar" => Ok(P::Stellar),
+            _ => Err(PTypeError::PTypeNotFound { bad_val: value }),
+        }
+    }
 }
 
 use PType as P;
