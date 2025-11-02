@@ -7,7 +7,7 @@ use crate::ptype::{PType, PTypeError, PTypePair};
 use crate::stat::{BaseStat, Stat, StatError, StatVec};
 
 #[derive(Debug, Error)]
-enum SpeciesError {
+pub enum SpeciesError {
     #[error("The database at {db_name} was not able to be accessed. rusqlite: {err}")]
     DBConnectionFail {
         err: rusqlite::Error,
@@ -27,10 +27,10 @@ enum SpeciesError {
     BadStat(StatError),
 }
 
-struct Species {
-    name: Arc<str>,
-    ptype_pair: PTypePair,
-    basestats: StatVec<BaseStat>,
+pub struct Species {
+    pub name: Arc<str>,
+    pub ptype_pair: PTypePair,
+    pub basestats: StatVec<BaseStat>,
     // movepool: ...
 }
 
@@ -47,7 +47,7 @@ struct RawSpecies {
 }
 
 impl Species {
-    fn from_name(name: Arc<str>) -> Result<Species, SpeciesError> {
+    pub fn from_name(name: Arc<str>) -> Result<Species, SpeciesError> {
         let db_path = "pokemon.db";
         let conn = Connection::open(db_path).map_err(|err| SpeciesError::DBConnectionFail {
             err,

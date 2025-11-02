@@ -78,7 +78,7 @@ pub struct StatVec<T: Stat> {
     spe: T,
 }
 
-impl<T: Stat> StatVec<T> {
+impl<T: Stat + Clone> StatVec<T> {
     pub fn new(hp: T, atk: T, def: T, spa: T, spd: T, spe: T) -> Self {
         StatVec::<T> {
             hp,
@@ -113,6 +113,21 @@ impl<T: Stat> StatVec<T> {
             spd,
             spe,
         })
+    }
+
+    pub fn into_ints(self) -> [u16; 6] {
+        [
+            self.hp.get(),
+            self.atk.get(),
+            self.def.get(),
+            self.spa.get(),
+            self.spd.get(),
+            self.spe.get(),
+        ]
+    }
+
+    pub fn hp(&self) -> T {
+        self.hp.clone()
     }
 }
 
