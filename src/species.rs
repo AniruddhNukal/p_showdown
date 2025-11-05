@@ -4,7 +4,6 @@ use rusqlite::{Connection, params};
 use thiserror::Error;
 
 use crate::ptype::{PType, PTypeError, PTypePair};
-use crate::stat::{BaseStat, Stat, StatError, StatVec};
 
 #[derive(Debug, Error)]
 pub enum SpeciesError {
@@ -23,14 +22,12 @@ pub enum SpeciesError {
     },
     #[error("The PType does not exist: {0}")]
     BadPType(PTypeError),
-    #[error("The Stat is invalide: {0}")]
-    BadStat(StatError),
 }
 
 pub struct Species {
     pub name: Arc<str>,
     pub ptype_pair: PTypePair,
-    pub basestats: StatVec<BaseStat>,
+    pub basestats: [u16; 6],
     // movepool: ...
 }
 
@@ -89,9 +86,7 @@ impl Species {
         let type1 = PType::try_from(raw.type_1).map_err(SpeciesError::BadPType)?;
         let type2 = PType::try_from(raw.type_2).map_err(SpeciesError::BadPType)?;
         let ptype_pair = PTypePair::new(type1, type2);
-        let stats: StatVec<BaseStat> =
-            StatVec::from_int(raw.hp, raw.atk, raw.def, raw.spa, raw.spd, raw.spe)
-                .map_err(SpeciesError::BadStat)?;
+        let stats = [raw.hp, raw.atk, raw.def, raw.spa, raw.spd, raw.spe];
         Ok(Species {
             name,
             ptype_pair,

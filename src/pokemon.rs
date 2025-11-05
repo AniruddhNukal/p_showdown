@@ -5,7 +5,7 @@ use thiserror::Error;
 use crate::{
     ptype::{PType, PTypePair},
     species::{self, Species, SpeciesError},
-    stat::{BaseStat, EV, IV, StageVec, Stat, StatVec},
+    stat::{EVSpread, IVSpread, StageVec},
 };
 
 #[derive(Debug, Error)]
@@ -16,24 +16,24 @@ pub enum PokemonError {
 
 pub struct Pokemon {
     level: u8,
-    stats: StatVec<BaseStat>,
+    stats: [u16; 6],
     species_name: Arc<str>,
     nickname: Arc<str>,
     ptypes: PTypePair,
     // moves: MoveSet,
-    curr_hp: BaseStat,
+    curr_hp: u16,
     stages: StageVec,
 }
 
 #[derive(Debug, Clone)]
 pub struct PokeMini {
     level: u8,
-    stats: StatVec<BaseStat>,
+    stats: [u16; 6],
     species_name: Arc<str>,
     nickname: Arc<str>,
     ptypes: PTypePair,
     // moves: MoveSet,
-    curr_hp: BaseStat,
+    curr_hp: u16,
     // pers_effects: (Some effect storing type)
 }
 
@@ -69,8 +69,8 @@ impl PokeMini {
         nickname: Arc<str>,
         level: u8,
         species: Arc<str>,
-        ivs: StatVec<IV>,
-        evs: StatVec<EV>,
+        ivs: IVSpread,
+        evs: EVSpread,
         /* moveset: MoveSet */
     ) -> Result<PokeMini, PokemonError> {
         let species = Species::from_name(species).map_err(PokemonError::SpeciesFail)?;
@@ -79,8 +79,8 @@ impl PokeMini {
             basestats,
             ptype_pair,
         } = species;
-        let stats = calculate_stats(level, basestats, ivs, evs);
-        let curr_hp = stats.hp();
+        let stats = calculate_stats(level, basestats, ivs.get_stats(), evs.get_stats());
+        let curr_hp = stats[0];
 
         Ok(PokeMini {
             level,
@@ -93,16 +93,11 @@ impl PokeMini {
     }
 }
 
-fn calculate_stats(
-    level: u8,
-    basestats: StatVec<BaseStat>,
-    ivs: StatVec<IV>,
-    evs: StatVec<EV>,
-) -> StatVec<BaseStat> {
+fn calculate_stats(level: u8, basestats: [u16; 6], ivs: [u16; 6], evs: [u16; 6]) -> [u16; 6] {
     let l = u16::from(level);
-    let b = basestats.into_ints();
-    let iv = ivs.into_ints();
-    let ev = evs.into_ints();
+    let b = basestats;
+    let iv = ivs;
+    let ev = evs;
 
     let hp1 = ev[0] / 4;
     let hp2 = (2 * b[0] + iv[0] + hp1 * l) / 100;
@@ -116,5 +111,5 @@ fn calculate_stats(
         o[i] = s;
     }
 
-    StatVec::from_int(hp, o[1], o[2], o[3], o[4], o[5]).unwrap()
+    o
 }
